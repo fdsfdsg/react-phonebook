@@ -1,108 +1,53 @@
-import React, { Component } from 'react';
-import PhoneForm from './Components/PhoneForm';
-import PhoneInfoList from './Components/PhoneInfoList';
+import React, { useState, useRef } from 'react';
+import PhoneForm from './components/PhoneForm';
+import PhoneInfoList from './components/PhoneInfoList';
 
-class App extends Component {
-  id = 3;
-  state = {
-    information: [
-      {
-        id: 0,
-        name: '박상범',
-        phone: '010-4690-4164',
-      },
-      {
-        id: 1,
-        name: '아이유',
-        phone: '010-1234-5678',
-      },
-      {
-        id: 2,
-        name: '아이린',
-        phone: '010-0123-0123',
-      },
-    ],
-    keyword: '',
+const App = () => {
+  const [info, setInfo] = useState([
+    {
+      id: 1,
+      name: '박상범',
+      phoneNumber: '010-4690-4164',
+    },
+    {
+      id: 2,
+      name: '박한빈',
+      phoneNumber: '010-7669-8834',
+    },
+    {
+      id: 3,
+      name: '아이유',
+      phoneNumber: '010-xxxx-xxxx',
+    },
+  ]);
+  const [keyword, setKeyword] = useState('');
+
+  const nextId = useRef(4);
+
+  const onChange = (e) => {
+    setKeyword(e.target.value);
   };
 
-  UNSAFE_componentWillMount() {
-    const information = localStorage.information;
-    const id = localStorage.id;
-
-    if (information) {
-      this.setState({
-        information: JSON.parse(information),
-        id,
-      });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (JSON.stringify(prevState.information) !== JSON.stringify(this.state.information)) {
-      localStorage.information = JSON.stringify(this.state.information)
-    }
-    if (prevState.id !== this.state.id) {
-      localStorage.id = this.state.id
-    }
-  }
-
-  handleChange = e => {
-    this.setState({
-      keyword: e.target.value,
-    });
+  const onInsert = (name, phoneNumber) => {
+    const nextInfo = {
+      id: nextId.current++,
+      name: name,
+      phoneNumber: phoneNumber,
+    };
+    setInfo((info) => info.concat(nextInfo));
   };
 
-  handleCreate = data => {
-    const { information } = this.state;
-    this.setState({
-      information: information.concat({
-        ...data,
-        id: this.id++,
-      }),
-    });
+  const onDelete = (id) => {
+    setInfo(info.filter((infos) => infos.id !== id));
   };
 
-  handleRemove = id => {
-    const { information } = this.state;
-    this.setState({
-      information: information.filter(info => info.id !== id),
-    });
-  };
-
-  handleUpdate = (id, data) => {
-    const { information } = this.state;
-    this.setState({
-      information: information.map(info => {
-        if (info.id === id) {
-          return {
-            id,
-            ...data,
-          };
-        }
-        return info;
-      }),
-    });
-  };
-
-  render() {
-    return (
-      <div>
-        <PhoneForm onCreate={this.handleCreate} />
-        <input
-          value={this.state.keyword}
-          onChange={this.handleChange}
-          placeholder="검색.."
-        />
-        <PhoneInfoList
-          data={this.state.information.filter(
-            info => info.name.indexOf(this.state.keyword) > -1,
-          )}
-          onRemove={this.handleRemove}
-          onUpdate={this.handleUpdate}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <>
+      <PhoneForm onInsert={onInsert} />
+      <input placeholder="검색.." onChange={onChange} value={keyword} />
+      <PhoneInfoList onDelete={onDelete} info={info} />
+    </>
+  );
+};
 
 export default App;

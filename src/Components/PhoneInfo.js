@@ -1,103 +1,58 @@
-import React, { Component, Fragment } from 'react';
+import React, { useState } from "react";
+const PhoneInfo = ({ info, onDelete }) => {
+  const [edit, setEdit] = useState(false);
+  const [infos, setInfos] = useState(info);
 
-class PhoneInfo extends Component {
-  state = {
-    editing: false,
-    name: '',
-    phone: '',
+  const style = {
+    border: "1px solid #000",
+    width: "500px",
+    padding: "10px",
+    margin: "10px 0",
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(this.state !== nextState){
-      return true;
-    }
-    return this.props.info !== nextProps.info;
-  }
-  
-
-  handleRemove = () => {
-    const { info, onRemove } = this.props;
-    onRemove(info.id);
+  const handleChange = () => {
+    setEdit(!edit);
   };
 
-  handleToggleEdit = () => {
-    // true -> false
-       // onUpdate
-    // false -> true
-       // state에 info 값 넣어주기
-    const { info, onUpdate } = this.props;
-
-    if(this.state.editing){
-      onUpdate(info.id,{
-        name: this.state.name,
-        phone: this.state.phone
-      })
-    } else{
-      this.setState({
-        name: info.name,
-        phone: info.phone
-      })
-    }
-    
-    this.setState({
-      editing: !this.state.editing,
+  const handleModify = (e) => {
+    setInfos({
+      ...infos,
+      [e.target.name]: e.target.value,
     });
   };
 
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
+  const handleDelete = () => {
+    onDelete(infos.id);
+  };
 
-  render() {
-    const { name, phone } = this.props.info;
-    const { editing } = this.state;
+  return (
+    <div style={style}>
+      {edit ? (
+        <>
+          <div>
+            {`이름 : `}
+            <input name="name" onChange={handleModify} value={infos.name} />
+          </div>
+          <div>
+            {`전화번호 : `}
+            <input
+              name="phoneNumber"
+              onChange={handleModify}
+              value={infos.phoneNumber}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div>{`이름 : ${infos.name}`}</div>
+          <div>{`전화번호 : ${infos.phoneNumber}`}</div>
+        </>
+      )}
 
-    const style = {
-      border: '1px solid black',
-      padding: '8px',
-      margin: '8px',
-    };
-
-    console.log(name);
-
-    return (
-      <div style={style}>
-        {
-          editing ? (
-            <Fragment>
-              <div>
-                <input 
-                  name="name"
-                  value={this.state.name}
-                  onChange={this.handleChange}
-                />
-              </div>
-              <div>
-                <input 
-                  name="phone"
-                  value={this.state.phone}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </Fragment>
-          ) : (
-            <Fragment>
-              <div>
-                <b>{name}</b>
-              </div>
-              <div>{phone}</div>
-            </Fragment>
-          )
-        }
-        <button onClick={this.handleRemove}>삭제</button>
-        <button onClick={this.handleToggleEdit}>
-          {editing ? '적용' : '수정'}
-        </button>
-      </div>
-    );
-  }
-}
+      <button onClick={handleChange}>{edit ? "적용" : "수정"}</button>
+      <button onClick={handleDelete}>삭제</button>
+    </div>
+  );
+};
 
 export default PhoneInfo;

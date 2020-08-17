@@ -1,53 +1,53 @@
-import React, { Component } from "react";
+import React, { useState, useRef } from "react";
 
-class PhoneForm extends Component {
+const PhoneForm = ({onInsert}) => {
+  const [input, setInput] = useState({
+    name: "",
+    phoneNumber: "",
+  });
 
-  input = React.createRef()
-
-  state = {
-    name: " ",
-    phone: " "
-  };
-
-  handleChange = e => {
-    this.setState({
-      [e.target.name]: e.target.value
+  const onChange = (e) => {
+    setInput({  
+        ...input,
+        [e.target.name]: e.target.value 
     });
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.onCreate({
-      name: this.state.name,
-      phone: this.state.phone
-    });
-    this.setState({
-      name: " ",
-      phone: " "
-    });
-    this.input.current.focus()
-  };
+  const currentInput = useRef();
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          name="name"
-          placeholder="이름"
-          onChange={this.handleChange}
-          value={this.state.name}
-          ref={this.input}
-        />
-        <input
-          name="phone"
-          placeholder="전화번호"
-          onChange={this.handleChange}
-          value={this.state.phone}
-        />
-        <button type="submit">등록</button>
-      </form>
-    );
+  const onCreate = () => {
+    onInsert(input.name, input.phoneNumber);
+    setInput({
+        name: "",
+        phoneNumber: ""
+    })
+    currentInput.current.focus();
   }
-}
+
+  return (
+    <div>
+      <div>
+        <input
+          placeholder="이름"
+          name="name"
+          onChange={onChange}
+          value={input.name}
+          ref={currentInput}
+        />
+        <input
+          placeholder="연락처"
+          name="phoneNumber"
+          onChange={onChange}
+          value={input.phoneNumber}
+        />
+        <button onClick={onCreate}>추가</button>
+      </div>
+      <div>
+        {input.name}
+        {input.phoneNumber}
+      </div>
+    </div>
+  );
+};
 
 export default PhoneForm;
