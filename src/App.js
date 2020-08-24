@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PhoneForm from './components/PhoneForm';
 import PhoneInfoList from './components/PhoneInfoList';
 
@@ -17,6 +17,11 @@ const App = () => {
     {
       id: 3,
       name: '아이유',
+      phoneNumber: '010-xxxx-xxxx',
+    },
+    {
+      id: 4,
+      name: 'aFdasdAA',
       phoneNumber: '010-xxxx-xxxx',
     },
   ]);
@@ -41,11 +46,24 @@ const App = () => {
     setInfo(info.filter((infos) => infos.id !== id));
   };
 
+  ///////////// 검색기능
+  const [newInfo, setNewInfo] = useState([]);
+
+  useEffect(() => {
+    setNewInfo(info.filter((infos) => infos.name.indexOf(keyword) > -1));
+  }, [keyword,info]);
+  //////////////
+  console.log(newInfo);
+
   return (
     <>
       <PhoneForm onInsert={onInsert} />
       <input placeholder="검색.." onChange={onChange} value={keyword} />
-      <PhoneInfoList onDelete={onDelete} info={info} />
+      {keyword === '' ? (
+        <PhoneInfoList onDelete={onDelete} info={info} />
+      ) : (
+        <PhoneInfoList onDelete={onDelete} info={newInfo} />
+      )}
     </>
   );
 };
