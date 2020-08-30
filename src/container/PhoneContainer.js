@@ -1,33 +1,40 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeInput, insert, search, remove } from '../modules/phone';
+import { changeInputName, changeInputPhoneNumber, insert, search, remove, update } from '../modules/phone';
 import Phone from '../components/Phone';
 
 const PhoneContainer = () => {
-  const { input, keyword, phones } = useSelector(({ phone }) => ({
+  const { inputName, inputPhoneNumber, phones } = useSelector(({ phone }) => ({
+    inputName: phone.inputName,
+    inputPhoneNumber: phone.inputPhoneNumber,
     phones: phone.phones,
   }));
 
   const dispatch = useDispatch();
 
-  const onChangeInput = useCallback((input) => dispatch(changeInput(input)), [
+  const onChangeInputName = useCallback((inputName) => dispatch(changeInputName(inputName)), [
     dispatch,
   ]);
-  const onInsert = useCallback((phone) => dispatch(insert(phone)), [dispatch]);
-  const onSearch = useCallback((keyword) => dispatch(search(keyword)), [
-    dispatch,
-  ]);
+  const onChangeInputPhoneNumber = useCallback((inputPhoneNumber) => dispatch(changeInputPhoneNumber(inputPhoneNumber)),[dispatch]);
+  const onInsert = useCallback((name,phoneNumber) => dispatch(insert(name,phoneNumber)), [dispatch]);
+  // const onSearch = useCallback((keyword) => dispatch(search(keyword)), [
+  //   dispatch,
+  // ]);
   const onRemove = useCallback((id) => dispatch(remove(id)), [dispatch]);
+  const onUpdate = useCallback(currentId => dispatch(update(currentId)),[dispatch]);
 
   return (
     <Phone
-      input={input}
-      keyword={keyword}
+      inputName={inputName}
+      inputPhoneNumber={inputPhoneNumber}
+      onChangeInputName={onChangeInputName}
+      onChangeInputPhoneNumber={onChangeInputPhoneNumber}
+      // keyword={keyword}
       phones={phones}
-      onChangeInput={onChangeInput}
       onInsert={onInsert}
-      onSearch={onSearch}
+      // onSearch={onSearch}
       onRemove={onRemove}
+      onUpdate={onUpdate}
     />
   );
 };

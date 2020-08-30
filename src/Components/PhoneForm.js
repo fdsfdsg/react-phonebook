@@ -1,50 +1,45 @@
-import React, { useState, useRef } from "react";
+import React, { useCallback,useRef } from "react";
 
-const PhoneForm = ({onInsert}) => {
-  const [input, setInput] = useState({
-    name: "",
-    phoneNumber: "",
-  });
+const PhoneForm = ({ onInsert, inputName, inputPhoneNumber, onChangeInputName, onChangeInputPhoneNumber }) => {
 
-  const onChange = (e) => {
-    setInput({  
-        ...input,
-        [e.target.name]: e.target.value 
-    });
-  };
+  const onChangePN = useCallback((e) => { 
+    onChangeInputPhoneNumber(e.target.value)
+  },[onChangeInputPhoneNumber]);
 
-  const currentInput = useRef();
+  const onChangeN = useCallback((e) => { 
+    onChangeInputName(e.target.value)
+  },[onChangeInputName]);
 
-  const onCreate = () => {
-    onInsert(input.name, input.phoneNumber);
-    setInput({
-        name: "",
-        phoneNumber: ""
-    })
-    currentInput.current.focus();
-  }
+  const currentinput = useRef();
+
+  const onCreate = useCallback(() => {
+    onInsert(inputName, inputPhoneNumber);
+    onChangeInputName("");
+    onChangeInputPhoneNumber("");
+    currentinput.current.focus();
+  },[onInsert, inputName, inputPhoneNumber]);
 
   return (
     <div>
       <div>
         <input
           placeholder="이름"
-          name="name"
-          onChange={onChange}
-          value={input.name}
-          ref={currentInput}
+          name="inputName"
+          onChange={onChangeN}
+          value={inputName}
+          ref={currentinput}
         />
         <input
           placeholder="연락처"
-          name="phoneNumber"
-          onChange={onChange}
-          value={input.phoneNumber}
+          name="inputPhoneNumber"
+          onChange={onChangePN}
+          value={inputPhoneNumber}
         />
         <button onClick={onCreate}>추가</button>
       </div>
       <div>
-        {input.name}
-        {input.phoneNumber}
+        {inputName}
+        {inputPhoneNumber}
       </div>
     </div>
   );

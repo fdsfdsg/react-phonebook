@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-const PhoneInfo = ({ info, onRemove }) => {
+const PhoneInfo = ({ info, onRemove, onUpdate, onChangeInputName, onChangeInputPhoneNumber, inputName, inputPhoneNumber }) => {
   const [edit, setEdit] = useState(false);
+  const [inputs, setInputs] = useState(inputName);
   const [infos, setInfos] = useState(info);
-
+  const []
+  
   const style = {
     border: '1px solid #000',
     width: '500px',
@@ -12,17 +14,25 @@ const PhoneInfo = ({ info, onRemove }) => {
 
   const handleChange = () => {
     setEdit(!edit);
+    if(edit){
+      onUpdate(info.id)
+    }
   };
 
-  const handleModify = (e) => {
+  const handleModifyN = (e) => {
     setInfos({
       ...infos,
       [e.target.name]: e.target.value, // name: '박상범' || phoneNumber: '010-4121-4165' 이렇게 되게하려고 name으로 노린거임
     });
+    // onUpdate(e.target.value)
   };
 
+  const handleModifyPN = (e) => {
+    onChangeInputPhoneNumber(e.target.value)
+  }
+
   const handleDelete = () => {
-    onRemove(infos.id);
+    onRemove(info.id);
   };
 
   return (
@@ -31,21 +41,25 @@ const PhoneInfo = ({ info, onRemove }) => {
         <>
           <div>
             {`이름 : `}
-            <input name="name" onChange={handleModify} value={infos.name} />
+            <input 
+              name="name" 
+              onChange={handleModifyN} 
+              value={info.name} 
+            />
           </div>
           <div>
             {`전화번호 : `}
             <input
               name="phoneNumber"
-              onChange={handleModify}
-              value={infos.phoneNumber}
+              onChange={handleModifyPN}
+              value={info.phoneNumber}
             />
           </div>
         </>
       ) : (
         <>
-          <div>{`이름 : ${infos.name}`}</div>
-          <div>{`전화번호 : ${infos.phoneNumber}`}</div>
+          <div>{`이름 : ${info.name}`}</div>
+          <div>{`전화번호 : ${info.phoneNumber}`}</div>
         </>
       )}
 

@@ -1,30 +1,28 @@
 import { createAction, handleActions } from 'redux-actions';
 //액션
-const CHANGE_INPUT = 'phone/CHANGE_INPUT';
+const CHANGE_INPUT_NAME = 'phone/CHANGE_INPUT_NAME';
+const CHANGE_INPUT_PHONE_NUMBER = 'phone/CHANGE_INPUT_PHONE_NUMBER';
 const INSERT = 'phone/INSERT';
 const SEARCH = 'phone/SEARCH';
-// const CHANGE = 'phone/CHANGE';
 const REMOVE = 'phone/REMOVE';
+const UPDATE = 'phone/UPDATE';
 
 //액션 생성 함수
-export const changeInput = createAction(CHANGE_INPUT, (input) => input);
+export const changeInputName = createAction(CHANGE_INPUT_NAME, (inputName) => inputName);
+export const changeInputPhoneNumber = createAction(CHANGE_INPUT_PHONE_NUMBER, (inputPhoneNumber) => inputPhoneNumber);
 let nextId = 4;
-export const insert = createAction(INSERT, (name,phoneNumber) => ({
+export const insert = createAction(INSERT, (name, phoneNumber) => ({
   id: nextId++,
   name,
   phoneNumber,
 }));
 export const search = createAction(SEARCH, (phone) => phone);
-// export const change = createAction(CHANGE, )
 export const remove = createAction(REMOVE, (id) => id);
+export const update = createAction(UPDATE, phones => phones);
 
 const initialState = {
-  input: [
-    {
-      name:'' ,
-      phoneNumber:''
-    }
-  ],
+  inputName: '',
+  inputPhoneNumber: '',
   phones: [
     {
       id: 1,
@@ -48,18 +46,23 @@ const initialState = {
 
 const phone = handleActions(
   {
-    [CHANGE_INPUT]: (state, { payload: input }) => ({ ...state, input }),
+    [CHANGE_INPUT_NAME]: (state, { payload: inputName }) => ({ ...state, inputName }),
+    [CHANGE_INPUT_PHONE_NUMBER]: (state, { payload: inputPhoneNumber }) => ({ ...state, inputPhoneNumber}),
     [INSERT]: (state, { payload: phone }) => ({
       ...state,
       phones: state.phones.concat(phone),
     }),
     [SEARCH]: (state, { payload: keyword }) => ({
       ...state,
-      todos: state.todos.filter((todo) => todo.name.indexOf(keyword) > -1),
+      phones: state.phones.filter((phone) => phone.name.indexOf(keyword) > -1),
     }),
     [REMOVE]: (state, { payload: id }) => ({
       ...state,
       phones: state.phones.filter((phone) => phone.id !== id),
+    }),
+    [UPDATE]: (state, { payload: currentId }) => ({
+      ...state,
+      phones: state.phones.map((phone) => phone.id === currentId ? ({...phone, name: phone.name }) : phone)
     }),
   },
   initialState,
